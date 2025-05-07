@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - Educational Platform</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --primary-light: #60a5fa;
+            --secondary: #64748b;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --gray-100: #1e293b;
+            --gray-200: #334155;
+            --gray-300: #475569;
+            --gray-800: #e2e8f0;
+            --gray-900: #f1f5f9;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--gray-900);
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background-color: var(--card-bg);
+            border-right: 1px solid var(--gray-200);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-header h1 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            text-decoration: none;
+            color: var(--gray-800);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background-color: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .nav-links a i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .content-header h2 {
+            font-size: 1.8rem;
+            color: var(--gray-900);
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        /* Card Styles */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .card-header h3 {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+        
+        .card-subheader {
+            color: var(--secondary);
+            font-size: 0.9rem;
+        }
+        
+        .card-body {
+            padding: 16px;
+        }
+        
+        .card-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .card-footer .date {
+            color: var(--secondary);
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-pending {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .badge-submitted {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .modal {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            width: 600px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            font-size: 1.4rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* File Upload Styles */
+        .file-upload {
+            border: 1px dashed var(--gray-300);
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+        
+        .file-upload i {
+            font-size: 32px;
+            color: var(--secondary);
+            margin-bottom: 12px;
+        }
+        
+        .file-upload p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--secondary);
+        }
+        
+        /* Assignment View Styles */
+        .assignments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .assignment-item {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .assignment-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        
+        .assignment-meta {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            display: flex;
+            gap: 16px;
+        }
+        
+        .assignment-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        /* Tabs Styles */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 24px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            color: var(--secondary);
+            position: relative;
+            font-weight: 500;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th, .table td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        .table th {
+            background-color: var(--gray-200);
+            font-weight: 500;
+        }
+        
+        .table tr {
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .table tr:last-child {
+            border-bottom: none;
+        }
+        
+        /* Watermark Style */
+        .watermark {
+            text-align: center;
+            padding: 16px;
+            color: var(--gray-300);
+            font-size: 12px;
+            margin-top: 40px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--dark-bg);
+        }
+        
+        /* User Profile Section */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            padding: 16px 12px;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            margin-right: 12px;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .user-role {
+            font-size: 12px;
+            color: var(--secondary);
+        }
+        
+        /* Show active tab content by default */
+        #assignments-tab-content {
+            display: block;
+        }
+        
+        /* Icons using FontAwesome */
+        .fa {
+            font-size: 18px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo" style="padding: 5px 0;">
+                    <img src="#" id="educonnect-logo" alt="EduConnect Logo" style="max-width: 100%; height: auto; margin-bottom: 8px;">
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fa fa-users"></i> Classes</a></li>
+                <li><a href="#"><i class="fa fa-book"></i> Assignments</a></li>
+                <li><a href="#"><i class="fa fa-file"></i> Resources</a></li>
+                <li><a href="#"><i class="fa fa-calendar"></i> Calendar</a></li>
+                <li><a href="#"><i class="fa fa-chart-simple"></i> Grades</a></li>
+                <li><a href="#"><i class="fa fa-message"></i> Messages</a></li>
+                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
+            </ul>
+            <div class="user-profile">
+                <div class="avatar">T</div>
+                <div class="user-info">
+                    <div class="user-name">Teacher Name</div>
+                    <div class="user-role">Teacher</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2>Dashboard</h2>
+                <button class="btn" id="create-assignment-btn"><i class="fa fa-plus"></i> Create Assignment</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" data-tab="assignments">Assignments</div>
+                <div class="tab" data-tab="classes">Classes</div>
+                <div class="tab" data-tab="submissions">Submissions</div>
+            </div>
+
+            <!-- Assignments Tab Content -->
+            <div id="assignments-tab-content" class="tab-content active">
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Math Quiz - Algebra</h3>
+                            <div class="card-subheader">Mathematics - Class 10A</div>
+                        </div>
+                        <div class="card-body">
+                            <p>Quiz covering algebraic expressions, equations, and problem-solving techniques.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="date">Due: May 15, 2025</span>
+                            <span class="badge badge-pending">Pending</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Science Project - Ecosystems</h3>
+                            <div class="card-subheader">Science - Class 9B</div>
+                        </div>
+                        <div class="card-body">
+                            <p>Research project on local ecosystems and biodiversity. Students to prepare a presentation.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="date">Due: May 20, 2025</span>
+                            <span class="badge badge-pending">Pending</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>History Essay - World War II</h3>
+                            <div class="card-subheader">History - Class 11C</div>
+                        </div>
+                        <div class="card-body">
+                            <p>1500-word essay analyzing the major causes and global impact of World War II.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span class="date">Due: May 12, 2025</span>
+                            <span class="badge badge-submitted">Submitted: 15/20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classes Tab Content -->
+            <div id="classes-tab-content" class="tab-content">
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Mathematics - Class 10A</h3>
+                            <div class="card-subheader">30 Students</div>
+                        </div>
+                        <div class="card-body">
+                            <p>Advanced mathematics curriculum focusing on algebra, geometry, and calculus fundamentals.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span>Mon, Wed, Fri - 9:00 AM</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Science - Class 9B</h3>
+                            <div class="card-subheader">28 Students</div>
+                        </div>
+                        <div class="card-body">
+                            <p>General science covering biology, chemistry, and physics with practical lab sessions.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span>Tue, Thu - 10:30 AM</span>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>History - Class 11C</h3>
+                            <div class="card-subheader">25 Students</div>
+                        </div>
+                        <div class="card-body">
+                            <p>Modern history curriculum covering major global events from the 20th century.</p>
+                        </div>
+                        <div class="card-footer">
+                            <span>Wed, Fri - 1:15 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submissions Tab Content -->
+            <div id="submissions-tab-content" class="tab-content">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Assignment</th>
+                                <th>Class</th>
+                                <th>Submitted On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Smith</td>
+                                <td>History Essay - World War II</td>
+                                <td>History - Class 11C</td>
+                                <td>May 5, 2025</td>
+                                <td><span class="badge badge-submitted">Submitted</span></td>
+                                <td>
+                                    <button class="btn"><i class="fa fa-eye"></i> View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Emma Johnson</td>
+                                <td>History Essay - World War II</td>
+                                <td>History - Class 11C</td>
+                                <td>May 6, 2025</td>
+                                <td><span class="badge badge-submitted">Submitted</span></td>
+                                <td>
+                                    <button class="btn"><i class="fa fa-eye"></i> View</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Michael Chen</td>
+                                <td>History Essay - World War II</td>
+                                <td>History - Class 11C</td>
+                                <td>May 7, 2025</td>
+                                <td><span class="badge badge-submitted">Submitted</span></td>
+                                <td>
+                                    <button class="btn"><i class="fa fa-eye"></i> View</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Assignment Modal -->
+    <div class="modal-backdrop" id="assignment-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create New Assignment</h3>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="assignment-form">
+                    <div class="form-group">
+                        <label class="form-label" for="assignment-title">Assignment Title</label>
+                        <input type="text" class="form-control" id="assignment-title" placeholder="Enter assignment title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="assignment-class">Class</label>
+                        <select class="form-control" id="assignment-class">
+                            <option value="">Select a class</option>
+                            <option value="math-10a">Mathematics - Class 10A</option>
+                            <option value="science-9b">Science - Class 9B</option>
+                            <option value="history-11c">History - Class 11C</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="assignment-description">Description</label>
+                        <textarea class="form-control" id="assignment-description" placeholder="Enter assignment instructions"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="assignment-due">Due Date</label>
+                        <input type="date" class="form-control" id="assignment-due">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Attachments</label>
+                        <div class="file-upload" id="file-upload-area">
+                            <i class="fa fa-cloud-arrow-up"></i>
+                            <p>Click to upload files or drag and drop</p>
+                            <input type="file" id="file-upload" style="display: none;" multiple>
+                        </div>
+                        <div id="uploaded-files" style="margin-top: 12px;"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" style="background-color: var(--secondary);" id="cancel-btn">Cancel</button>
+                <button class="btn" id="create-btn">Create Assignment</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Watermark -->
+    <div class="watermark">
+        Made by Kshitiz Singh
+    </div>
+
+    <script>
+        // Logo SVG Content
+        const logoSvg = `<svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Speech Bubbles with Gradient -->
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00b0ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="pinkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff0080;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff4d94;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#9333ea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="centerGradient" gradientTransform="rotate(45)">
+      <stop offset="0%" style="stop-color:#fcd34d;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ef4444;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Left Speech Bubble -->
+  <path d="M180,150 C140,150 110,180 110,220 C110,260 140,290 180,290 L200,290 L210,320 L220,290 L240,290 C280,290 310,260 310,220 C310,180 280,150 240,150 Z" fill="url(#blueGradient)" stroke="none" />
+  
+  <!-- Right Speech Bubble -->
+  <path d="M360,150 C320,150 290,180 290,220 C290,260 320,290 360,290 L380,290 L390,320 L400,290 L420,290 C460,290 490,260 490,220 C490,180 460,150 420,150 Z" fill="url(#pinkGradient)" stroke="none" />
+  
+  <!-- Connection Circles and Lines -->
+  <line x1="310" y1="220" x2="350" y2="180" stroke="url(#purpleGradient)" stroke-width="15" />
+  <line x1="310" y1="220" x2="250" y2="260" stroke="url(#greenGradient)" stroke-width="15" />
+  <line x1="310" y1="220" x2="390" y2="260" stroke="#ef4444" stroke-width="15" />
+  
+  <circle cx="310" cy="220" r="25" fill="url(#centerGradient)" />
+  <circle cx="310" cy="220" r="10" fill="#fff" />
+  
+  <circle cx="250" cy="260" r="12" fill="#3b82f6" />
+  <circle cx="350" cy="180" r="12" fill="#10b981" />
+  <circle cx="390" cy="260" r="12" fill="#ef4444" />
+</svg>`;
+
+        // Set the logo SVG as the src for the image
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoImg = document.getElementById('educonnect-logo');
+            if (logoImg) {
+                logoImg.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(logoSvg);
+            }
+        });
+        
+        // Tab Switching
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all content
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Show selected content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(`${tabName}-tab-content`).classList.add('active');
+            });
+        });
+        
+        // Modal Functions
+        const modal = document.getElementById('assignment-modal');
+        const createBtn = document.getElementById('create-assignment-btn');
+        const closeBtn = document.getElementById('close-modal');
+        const cancelBtn = document.getElementById('cancel-btn');
+        
+        createBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+        
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        
+        // Close modal if clicked outside
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // File Upload Functionality
+        const fileUploadArea = document.getElementById('file-upload-area');
+        const fileInput = document.getElementById('file-upload');
+        const uploadedFilesContainer = document.getElementById('uploaded-files');
+        
+        fileUploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', () => {
+            displayUploadedFiles(fileInput.files);
+        });
+        
+        // Drag and Drop Functionality
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.style.borderColor = 'var(--primary)';
+            fileUploadArea.style.backgroundColor = 'rgba(37, 99, 235, 0.05)';
+        });
+        
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.style.borderColor = 'var(--gray-300)';
+            fileUploadArea.style.backgroundColor = 'transparent';
+        });
+        
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.style.borderColor = 'var(--gray-300)';
+            fileUploadArea.style.backgroundColor = 'transparent';
+            
+            if (e.dataTransfer.files.length > 0) {
+                displayUploadedFiles(e.dataTransfer.files);
+            }
+        });
+        
+        function displayUploadedFiles(files) {
+            uploadedFilesContainer.innerHTML = '';
+            
+            Array.from(files).forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.style.display = 'flex';
+                fileItem.style.alignItems = 'center';
+                fileItem.style.justifyContent = 'space-between';
+                fileItem.style.padding = '8px 12px';
+                fileItem.style.marginBottom = '8px';
+                fileItem.style.backgroundColor = 'var(--gray-200)';
+                fileItem.style.borderRadius = '4px';
+                
+                const fileName = document.createElement('span');
+                fileName.textContent = file.name;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.innerHTML = '&times;';
+                removeBtn.style.background = 'none';
+                removeBtn.style.border = 'none';
+                removeBtn.style.cursor = 'pointer';
+                removeBtn.style.color = 'var(--danger)';
+                removeBtn.style.fontSize = '16px';
+                removeBtn.style.fontWeight = 'bold';
+                removeBtn.addEventListener('click', () => {
+                    fileItem.remove();
+                });
+                
+                fileItem.appendChild(fileName);
+                fileItem.appendChild(removeBtn);
+                uploadedFilesContainer.appendChild(fileItem);
+            });
+        }
+        
+        // Form Submission
+        const assignmentForm = document.getElementById('assignment-form');
+        const createAssignmentBtn = document.getElementById('create-btn');
+        
+        createAssignmentBtn.addEventListener('click', () => {
+            const title = document.getElementById('assignment-title').value;
+            const classValue = document.getElementById('assignment-class').value;
+            const description = document.getElementById('assignment-description').value;
+            const dueDate = document.getElementById('assignment-due').value;
+            
+            if (!title || !classValue || !description || !dueDate) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // In a real application, you would send this data to your backend server
+            // For demonstration, we'll just create a new card and add it to the assignments tab
+            
+            let className = '';
+            const classSelect = document.getElementById('assignment-class');
+            className = classSelect.options[classSelect.selectedIndex].text;
+            
+            const formattedDate = new Date(dueDate).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <h3>${title}</h3>
+                    <div class="card-subheader">${className}</div>
+                </div>
+                <div class="card-body">
+                    <p>${description}</p>
+                </div>
+                <div class="card-footer">
+                    <span class="date">Due: ${formattedDate}</span>
+                    <span class="badge badge-pending">Pending</span>
+                </div>
+            `;
+            
+            const cardsContainer = document.querySelector('#assignments-tab-content .cards');
+            cardsContainer.prepend(card);
+            
+            // Reset form and close modal
+            assignmentForm.reset();
+            uploadedFilesContainer.innerHTML = '';
+            modal.style.display = 'none';
+            
+            // Show success message
+            alert('Assignment created successfully!');
+        });
+    </script>
+</body>
+</html>
